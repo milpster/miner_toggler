@@ -1,4 +1,4 @@
-
+#name of the process (executable name minus .exe)
 $gameProcess = "proven_ground_client"
 $miner = "miner"
 
