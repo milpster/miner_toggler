@@ -26,6 +26,14 @@ function waitForProc {
 	Start-Sleep -Seconds:5
 }
 
+function restartGpu {
+	param(
+		$name
+	)
+	Get-PnpDevice -FriendlyName "*$($name)*" | Disable-PnpDevice -confirm:$false
+	Get-PnpDevice -FriendlyName "*$($name)*" | Enable-PnpDevice -confirm:$false
+}
+
 function killMiner {
 	#Stop-Process -Name "cmd"
 	Stop-Process -Name "miner"
@@ -37,6 +45,9 @@ while(1) {
 	waitForProc -invert 0 -proc $proc
 
 	killMiner
+
+	#we need to restart the first gpu aswell here, or else conquerors blade fps will be limited to 30 for some reason.
+	restartGpu -name:"2080"
 
 	Get-PnpDevice -FriendlyName "*RX 570*" | Disable-PnpDevice -confirm:$false
 
