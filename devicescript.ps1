@@ -1,4 +1,4 @@
-#name of the process (executable name minus .exe)
+
 $gameProcess = "proven_ground_client"
 $miner = "miner"
 
@@ -35,11 +35,29 @@ function restartGpu {
 }
 
 function killMiner {
-	#Stop-Process -Name "cmd"
 	Stop-Process -Name "miner"
+	Stop-Process -Name "SRBMiner-MULTI"
+	Start-Sleep -Seconds:1
+	Stop-Process -Name "cmd"
+}
+
+function startMiner {
+	param(
+		$amd=$true,
+		$nv=$true
+	)
+	if($amd -eq $true) {
+		Start-Process -FilePath 'C:\gmin\mine_eth_amdonly.bat' -WorkingDirectory 'C:\gmin\'
+		Start-Sleep -Seconds:5
+	}
+	if($nv -eq $true) {
+		Start-Process -FilePath 'C:\gmin\mine_eth_nvonly.bat' -WorkingDirectory 'C:\gmin\'
+	}
 }
 
 #hello i am main
+startMiner -amd true -nv true
+
 while(1) {
 	$proc = "GameCenter"
 	waitForProc -invert 0 -proc $proc
@@ -50,23 +68,25 @@ while(1) {
 	restartGpu -name:"2080"
 
 	Get-PnpDevice -FriendlyName "*RX 570*" | Disable-PnpDevice -confirm:$false
+	Get-PnpDevice -FriendlyName "*390*" | Disable-PnpDevice -confirm:$false
 
 	waitForProc -invert 0 -proc $gameProcess
 
 	Start-Sleep -Seconds:10
 
 	Get-PnpDevice -FriendlyName "*RX 570*" | Enable-PnpDevice -confirm:$false
+	Get-PnpDevice -FriendlyName "*390*" | Enable-PnpDevice -confirm:$false
 
 	Start-Sleep -Seconds:1
 
-	Start-Process -FilePath 'C:\gmin\mine_eth_rx570only.bat' -WorkingDirectory 'C:\gmin\'
+	startMiner -amd true -nv false
 
 	waitForProc -invert 1 -proc $gameProcess
 
 	killMiner
 
-	Start-Sleep -Seconds:5
-
-	Start-Process -FilePath 'C:\gmin\mine_eth.bat' -WorkingDirectory 'C:\gmin\'	
+	Start-Sleep -Seconds:2
+	
+	startMiner -amd true -nv true
 }
 
