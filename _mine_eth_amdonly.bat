@@ -1,0 +1,1 @@
+C:\gmin\miner.exe --algo ethash --server daggerhashimoto.eu.nicehash.com:3353 --user 3PB9Y2hhu56cda7XfcWruKHFtrstJEZNyD.i9 --devices 0 2

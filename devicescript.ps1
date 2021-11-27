@@ -35,9 +35,13 @@ function restartGpu {
 }
 
 function killMiner {
+	Stop-Process -Name "nbminer"
 	Stop-Process -Name "miner"
 	Stop-Process -Name "SRBMiner-MULTI"
-	Start-Sleep -Seconds:1
+	Stop-Process -Name "PhoenixMiner"
+	Stop-Process -Name "NiceHashQuickMiner"
+	Stop-Process -Name "excavator"
+	Start-Sleep -Seconds:2
 	Stop-Process -Name "cmd"
 }
 
@@ -46,12 +50,13 @@ function startMiner {
 		$amd=$true,
 		$nv=$true
 	)
-	if($amd -eq $true) {
-		Start-Process -FilePath 'C:\gmin\mine_eth_amdonly.bat' -WorkingDirectory 'C:\gmin\'
-		Start-Sleep -Seconds:5
-	}
 	if($nv -eq $true) {
 		Start-Process -FilePath 'C:\gmin\mine_eth_nvonly.bat' -WorkingDirectory 'C:\gmin\'
+		#Start-Process -FilePath 'C:\gmin\excavator_v1.7.1d_build880_Win64\NiceHashQuickMiner.exe' -WorkingDirectory 'C:\gmin\excavator_v1.7.1d_build880_Win64\'
+		Start-Sleep -Seconds:5
+	}
+	if($amd -eq $true) {
+		Start-Process -FilePath 'C:\gmin\mine_eth_amdonly.bat' -WorkingDirectory 'C:\gmin\'
 	}
 }
 
